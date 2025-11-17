@@ -1,0 +1,6 @@
+flask
+pymongo
+pyJWT
+werkzeug
+flask-cors
+waitress
