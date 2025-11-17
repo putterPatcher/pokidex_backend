@@ -86,10 +86,10 @@ def filterPokimon(request:flask.Request):
                 find_query["name"] = {"$regex": queries[i][0], "$options": "i"}
             elif i == 'candy_counts':
                 find_query["candy_counts"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
-            elif i == 'spwan_chance':
-                find_query["spwan_counts"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
+            elif i == 'spawn_chance':
+                find_query["spawn_chance"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
             elif i == 'avg_spawns':
-                find_query["avg_counts"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
+                find_query["avg_spawns"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
             elif i == 'height':
                 find_query["height"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
             elif i == 'weight':
