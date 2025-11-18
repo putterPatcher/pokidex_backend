@@ -1,3 +1,3 @@
 json_header = {
-    "Application-Type": "application/json"
+    "Content-Type": "application/json"
 }
