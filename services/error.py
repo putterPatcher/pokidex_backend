@@ -1,7 +1,7 @@
-from utils.connect import flask, app
+import flask
 
 def serverError(error):
-    return app.response_class(
+    return flask.Response(
         response=flask.json.dumps({
             "message": "Internal Server Error",
             "error": str(error),

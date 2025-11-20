@@ -1,4 +1,4 @@
-from utils.connect import flask
+import flask
 from paths import Pokidex
 from controllers.pokidex import *
 from services.get_response import get_response

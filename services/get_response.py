@@ -1,4 +1,4 @@
-from utils.connect import flask
+import flask
 from services.error import serverError
 
 def get_response(request: flask.Request, controller, *middlewares, **kwargs):
@@ -8,7 +8,7 @@ def get_response(request: flask.Request, controller, *middlewares, **kwargs):
                 for i in middlewares:
                     res = i(request, **kwargs)
                     if type(res) == flask.Response:
-                        break;
+                        return res
             except Exception as e:
                 return serverError(e)
             

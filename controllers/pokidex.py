@@ -1,4 +1,5 @@
-from utils.connect import *
+import flask
+# from utils.connect import users, pokidex
 from services.error import serverError
 from services.get_json_data import get_data, get_objid, get_dic
 from services.headers import json_header
@@ -6,8 +7,9 @@ from services.get_json_data import get_objid
 
 def getPokidex(request: flask.Request):
     try:
+        pokidex = flask.current_app.config["POKEDEX"]
         data = pokidex.find({})
-        response = app.response_class(
+        response = flask.Response(
             response = flask.json.dumps({
                 "message": "Got pokimons successfully",
                 "success":True,
@@ -22,9 +24,10 @@ def getPokidex(request: flask.Request):
 
 def getPokimon(request: flask.Request, id):
     try:
+        pokidex = flask.current_app.config["POKEDEX"]
         pokimon = pokidex.find_one({"_id": get_objid(id)})
         if pokimon:
-            response = app.response_class(
+            response = flask.Response(
                 response = flask.json.dumps({
                     "message": "Pokimon found",
                     "success":True,
@@ -34,7 +37,7 @@ def getPokimon(request: flask.Request, id):
                 headers=json_header
             )
         else:
-            response = app.response_class(
+            response = flask.Response(
                 response=flask.json.dumps({
                     "message": "No pokimon found",
                     "success":False
@@ -48,6 +51,8 @@ def getPokimon(request: flask.Request, id):
 
 def addPokimon(request: flask.Request):
     try:
+        users = flask.current_app.config["USERS"]
+        pokidex = flask.current_app.config["POKEDEX"]
         data = request.get_json()
         id = request.user["_id"]
         data['user_id'] = get_objid(id)
@@ -55,21 +60,21 @@ def addPokimon(request: flask.Request):
         fields = ['user_id', 'name', 'img', 'type', 'height', 'weight', 'candy', 'candy_count', 'egg', 'spawn_chance', 'avg_spawns', 'spawn_time', 'multipliers', 'weaknesses', 'next_evolution']
         for i in fields:
             if i not in data.keys():
-                return app.response_class(
+                return flask.Response(
                     headers=json_header,
                     status=400,
                     response=flask.json.dumps({
                         "success": False,
-                        "message": f"${i} is not included"
+                        "message": f"{i} is not included"
                     })
                 )
         pokimon = pokidex.insert_one(data)
         users.find_one_and_update({"_id": data["user_id"]}, { "$push": { "pokimons": pokimon.inserted_id}})
-        response=app.response_class(
+        response=flask.Response(
             headers=json_header,
             status=201,
             response=flask.json.dumps({
-                "success": False,
+                "success": True,
                 "message": "Added pokimon successfully"
             })
         )
@@ -79,6 +84,7 @@ def addPokimon(request: flask.Request):
 
 def filterPokimon(request:flask.Request):
     try:
+        pokidex = flask.current_app.config["POKEDEX"]
         queries = request.args.to_dict(flat=False)
         find_query = {}
         for i in queries.keys():
@@ -95,19 +101,21 @@ def filterPokimon(request:flask.Request):
             elif i == 'weight':
                 find_query["weight"] = {"$gte": float(queries[i][0]), "$lte": float(queries[i][1])}
             else:
-                return app.response_class(
+                return flask.Response(
                     headers=json_header,
                     status=400,
                     response=flask.json.dumps({
                         "success": False,
-                        "message": f"Queries are incorrect (${i})"
+                        "message": f"Queries are incorrect ({i})"
                     })
                 )
         data = pokidex.find(find_query)
-        response = app.response_class(
+        response = flask.Response(
             headers=json_header,
             status=200,
             response=flask.json.dumps({
+                "success": True,
+                "message": "Got pokemons successfully",
                 "data": get_data(data)
             })
         )

@@ -1,4 +1,4 @@
-from utils.connect import flask
+import flask
 from paths import Auth
 from controllers.auth import *
 from middlewares.auth import authUser, verifyUser
